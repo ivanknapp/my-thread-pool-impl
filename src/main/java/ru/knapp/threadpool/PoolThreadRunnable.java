@@ -19,6 +19,7 @@ public class PoolThreadRunnable implements Runnable {
                 Runnable runnable = taskQueue.take();
                 runnable.run();
             } catch (Exception e) {
+                e.printStackTrace();
                 //log or otherwise report exception,
                 //but keep pool thread alive.
             }

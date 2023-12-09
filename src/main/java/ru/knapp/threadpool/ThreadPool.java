@@ -13,7 +13,7 @@ public class ThreadPool {
 
     public ThreadPool(int noOfThreads, int maxNoOfTasks) {
 
-        taskQueue = new ArrayBlockingQueue(maxNoOfTasks);
+        taskQueue = new ArrayBlockingQueue<Runnable>(maxNoOfTasks);
 
         for (int i = 0; i < noOfThreads; i++) {
             PoolThreadRunnable poolThreadRunnable = new PoolThreadRunnable(taskQueue);
@@ -29,13 +29,15 @@ public class ThreadPool {
         if (this.isStopped) {
             throw new IllegalStateException("ThreadPool is stopped");
         }
-
+        //offer вернет false если мест в очереди уже нет
         this.taskQueue.offer(task);
     }
 
     public synchronized void stop() {
         this.isStopped = true;
         for (PoolThreadRunnable runnable : runnables) {
+            //doStop вызовет InterruptedException так как PoolThreadRunnable ожидает
+            //на taskQueue.take() но там есть try catch блок
             runnable.doStop();
         }
     }
